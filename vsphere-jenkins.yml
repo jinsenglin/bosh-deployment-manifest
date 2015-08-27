@@ -1,0 +1,60 @@
+name: jenkins
+director_uuid: f7602ef1-3b00-4a27-83c1-af2d05845608
+
+releases:
+- name: jenkins
+  version: latest
+
+compilation:
+  workers: 1
+  network: default
+  cloud_properties:
+    ram: 4096
+    disk: 10000
+    cpu: 2
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-60000
+  update_watch_time: 30000-60000
+  max_in_flight: 4
+
+networks:
+- name: default
+  type: manual
+  subnets:
+    - range: 140.92.25.0/24
+      static: "140.92.25.5 - 140.92.25.5"
+      gateway: 140.92.25.1
+      cloud_properties:
+        name: External Network
+
+resource_pools:
+- name: vmware
+  network: default
+  size: 1
+  stemcell:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    ram: 4096
+    disk: 10000
+    cpu: 2
+  
+jobs:
+- name: jenkins_master
+  template:
+  - jenkins_master
+  instances: 1
+  resource_pool: vmware
+  networks:
+  - name: default
+    static_ips:
+    - 140.92.25.5
+
+properties:
+  jenkins:
+    password: jEnKins
+    admin:
+      password: jEnKins
+
