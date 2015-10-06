@@ -2897,7 +2897,14 @@ properties:
         qHxf+ZH9BL1gk9Y6kCnbM5R60gfwjyW1/dQPjOzn9N394zd2FJoFHwdq9Qs0wBug
         spULZVNRxq7veq/fzwIDAQAB
         -----END PUBLIC KEY-----
-    ldap: null
+    ldap:
+      enabled: true
+      profile_type: search-and-bind
+      url: 'ldap://140.92.26.148:3890/'
+      userDN: 'cn=admin,dc=puppetlabs,dc=test'
+      userPassword: 'test'
+      searchBase: 'dc=puppetlabs,dc=test'
+      searchFilter: 'cn={0}'
     login: null
     newrelic: null
     no_ssl: true
