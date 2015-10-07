@@ -2903,8 +2903,8 @@ properties:
       url: 'ldap://140.92.26.148:3890/'
       userDN: 'cn=admin,dc=puppetlabs,dc=test'
       userPassword: 'test'
-      searchBase: 'dc=puppetlabs,dc=test'
-      searchFilter: 'cn={0}'
+      searchBase: 'ou=people,dc=puppetlabs,dc=test'
+      searchFilter: 'uid={0}'
     login: null
     newrelic: null
     no_ssl: true
