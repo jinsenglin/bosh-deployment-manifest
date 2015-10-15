@@ -1,0 +1,229 @@
+compilation:
+  cloud_properties:
+    instance_type: m1.medium # 编译虚机规格
+  network: services1 # 创建的网络，下面有servies1的定义
+  reuse_compilation_vms: true # 重用虚机编译
+  workers: 1
+director_uuid: 8ba3b08e-1d07-41ac-a9d9-af89a535c58e # bosh director的uuid，用bosh status可以查询到
+jobs:
+- instances: 2 # 启动的实例个数
+  name: mysql
+  networks:
+  - name: services1
+    static_ips: # 部署虚机的ip
+    - 10.60.28.151
+    - 10.60.28.152
+  persistent_disk: 4096 # 挂载的云硬盘，最少为3G
+  properties: # 配置
+    admin_password: "123456" # root密码
+    cluster_ips:
+    - 10.60.28.151
+    - 10.60.28.152
+    haproxy_ips: # 网关
+    - 10.60.28.153
+    haproxy_mysql_user: haproxy_check
+    max_connections: 1500
+    network_name: services1
+    seeded_databases: null
+    syslog_aggregator: null
+  release: cf-mysql
+  resource_pool: services-small # 部署虚机的资源池，下面有定义
+  template: mysql
+- instances: 1
+  name: haproxy
+  networks:
+  - name: services1
+    static_ips:
+    - 10.60.28.153
+    default: [dns, gateway] # 默认的网关
+  - name: floating
+    static_ips:
+    - 172.16.40.230 # 外部网络的浮动ip
+  properties:
+    external_domain: cf-demo.io
+    haproxy_mysql_user: haproxy_check
+    haproxy_stats_password: "123456" #A_PASSWORD_YOU_MAKE_UP
+    mysql_node:
+      ip: 10.60.28.151
+    nats: # cf nats配置
+      machines:
+      - 10.60.28.114
+      password: "123456" #NATS_PASSWORD_FROM_CF_RELEASE
+      port: 4223
+      user: nats
+    network_name: services1
+    syslog_aggregator: null
+  release: cf-mysql
+  resource_pool: services-small
+  template: haproxy
+- instances: 1
+  name: cf-mysql-broker
+  networks:
+  - name: services1
+    static_ips:
+    - 10.60.28.154
+  properties:
+    auth_password: "123456" #A_PASSWORD_YOU_MAKE_UP
+    auth_username: "tester" #A_USERNAME_YOU_MAKE_UP
+    cc_api_uri: "http://api.cf-demo.io" #YOUR_CF_API_URI
+    cookie_secret: "123456" #A_PASSWORD_YOU_MAKE_UP
+    external_host: p-mysql.cf-demo.io #YOUR_CF_DOMAIN
+    max_user_connections_default: 40
+    mysql_node:
+      admin_password: "123456" #A_PASSWORD_YOU_MAKE_UP
+      host: 10.60.28.151
+      persistent_disk: 4096
+    nats:
+      machines:
+      - 10.60.28.114
+      password: "123456" #NATS_PASSWORD_FROM_CF_RELEASE
+      port: 4223
+      user: nats
+    network_name: services1
+    networks:
+      broker_network: services1
+    services:
+    - dashboard_client:
+        id: p-mysql
+        secret: "123456" #A_PASSWORD_YOU_MAKE_UP
+      description: A MySQL service for application development and testing
+      id: 44b26033-1f54-4087-b7bc-da9652c2a539
+      metadata:
+        displayName: MySQL for Pivotal CF
+        documentationUrl: http://docs.gopivotal.com/
+        imageUrl: data:image/png;base64,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
+        longDescription: Provisioning a service instance creates a MySQL database.
+          Binding applications to the instance creates unique credentials for each
+          application to access the database.
+        providerDisplayName: Pivotal Software
+        supportUrl: http://gopivotal.com/support/
+      name: p-mysql
+      plans:
+      - description: Shared MySQL Server
+        id: ab08f1bc-e6fc-4b56-a767-ee0fea6e3f20
+        max_storage_mb: 100
+        max_user_connections: 20
+        metadata:
+          bullets:
+          - Not for production use - server is not replicated
+          - Shared MySQL server
+          - 100 MB storage
+          - 40 concurrent connections
+          costs:
+          - amount:
+              usd: 0
+            unit: MONTH
+          displayName: 100 MB Dev
+        name: 100mb-dev
+      - description: Shared MySQL Server
+        id: 11d0aa36-dcec-4021-85f5-ea4d9a5c8342
+        max_storage_mb: 1000
+        max_user_connections: 40
+        metadata:
+          bullets:
+          - Not for production use - server is not replicated
+          - Shared MySQL server
+          - 1000 MB storage
+          - 40 concurrent connections
+          costs:
+          - amount:
+              usd: 0
+            unit: MONTH
+          displayName: 1 GB Dev
+        name: 1gb-dev
+      tags:
+      - mysql
+    skip_ssl_validation: false
+    ssl_enabled: true
+    syslog_aggregator: null
+  release: cf-mysql
+  resource_pool: services-small
+  template: cf-mysql-broker
+- instances: 1
+  lifecycle: errand # 单次运行的任务，非服务
+  name: broker-registrar # 注册mysql-broker到cf
+  networks:
+  - name: services1
+    static_ips:
+    - 10.60.28.154
+  properties:
+    broker:
+      host: p-mysql.cf-demo.io #YOUR_CF_DOMAIN
+      name: p-mysql
+      password: "123456" #A_PASSWORD_YOU_MAKE_UP
+      username: "tester" #A_USERNAME_YOU_MAKE_UP
+    cf:
+      admin_password: "admin" #YOUR_CF_ADMIN_PASSWORD
+      admin_username: "admin" #YOUR_CF_ADMIN_USERNAME
+      api_url: "api.cf-demo.io" #YOUR_CF_API_URI
+  release: cf-mysql
+  resource_pool: services-small
+  template: broker-registrar
+- instances: 1
+  lifecycle: errand
+  name: broker-deregistrar
+  networks:
+  - name: services1
+    static_ips:
+    - 10.60.28.154
+  properties:
+    broker:
+      host: p-mysql.cf-demo.io # YOUR_CF_DOMAIN
+      name: p-mysql
+      password: "123456" #A_PASSWORD_YOU_MAKE_UP
+      username: "tester" #A_USERNAME_YOU_MAKE_UP
+    cf:
+      admin_password: "admin" # YOUR_CF_ADMIN_PASSWORD
+      admin_username: "admin" #YOUR_CF_ADMIN_USERNAME
+      api_url: "api.cf-demo.io" #YOUR_CF_API_URI
+  release: cf-mysql
+  resource_pool: services-small
+  template: broker-deregistrar
+#meta:
+#  apps_domain: YOUR_APPS_DOMAIN
+#  environment: YOUR_ENVIRONMENT_NAME
+#  external_domain: YOUR_CF_DOMAIN
+#  nats:
+#    machines:
+#    - 10.10.80.11
+#    password: NATS_PASSWORD_FROM_CF_RELEASE
+#    port: 4222
+#    user: nats
+#  syslog_aggregator: null
+name: cf-demo-mysql-test
+networks: # 部署用到的网络的定义
+- name: services1
+  subnets:
+  - cloud_properties:
+      net_id: eb7a0287-1f62-44bf-98c0-2345c802756a # 网络id
+      subnet: 6b2ddea5-b562-44b2-9de2-f6e6196f3dde # 子网id
+    dns:# dns服务器
+    - 10.60.28.50
+    gateway: 10.60.28.254 # 该网络的网关
+    range: 10.60.28.0/24 # 该网络所有的ip
+    reserved: # 保留的ip，bosh部署时，不会从这里分配
+    - 10.60.28.1 - 10.60.28.150
+    static: # 部署时，从这个范围分配ip
+    - 10.60.28.151 - 10.60.28.160
+  type: manual
+- name: floating # 浮动ip定义
+  type: vip
+  cloud_properties: {}
+properties: {}
+releases:
+- name: cf-mysql
+  version: 11
+resource_pools: # 部署用到的虚机池
+- cloud_properties:
+    instance_type: m1.small
+  name: services-small
+  network: services1
+  size: 5
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu
+    version: 2427
+update:
+  canaries: 1
+  canary_watch_time: 30000-600000
+  max_in_flight: 1
+  update_watch_time: 30000-600000
