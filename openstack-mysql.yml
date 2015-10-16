@@ -85,7 +85,7 @@ jobs:
     max_user_connections_default: 40
     mysql_node:
       admin_password: "123456"
-      host: 192.168.0.206
+      host: 10.5.50.135
       persistent_disk: 4096
     nats:
       machines:
