@@ -1,83 +1,97 @@
 compilation:
   cloud_properties:
-    instance_type: m1.medium # 编译虚机规格
-  network: services1 # 创建的网络，下面有servies1的定义
-  reuse_compilation_vms: true # 重用虚机编译
+    instance_type: m1.medium
+  network: services1
+  reuse_compilation_vms: true
   workers: 1
-director_uuid: 8ba3b08e-1d07-41ac-a9d9-af89a535c58e # bosh director的uuid，用bosh status可以查询到
+director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e
 jobs:
-- instances: 2 # 启动的实例个数
+- instances: 2
   name: mysql
   networks:
   - name: services1
-    static_ips: # 部署虚机的ip
-    - 10.60.28.151
-    - 10.60.28.152
-  persistent_disk: 4096 # 挂载的云硬盘，最少为3G
-  properties: # 配置
-    admin_password: "123456" # root密码
+    static_ips: 
+    - 192.168.0.206
+    - 192.168.0.207
+  persistent_disk: 4096 
+  properties: 
+    database_startup_timeout: 600
+    admin_password: "123456" 
     cluster_ips:
-    - 10.60.28.151
-    - 10.60.28.152
-    haproxy_ips: # 网关
-    - 10.60.28.153
+    - 192.168.0.206
+    - 192.168.0.207
+    haproxy_ips: 
+    - 192.168.0.208
     haproxy_mysql_user: haproxy_check
     max_connections: 1500
     network_name: services1
     seeded_databases: null
     syslog_aggregator: null
   release: cf-mysql
-  resource_pool: services-small # 部署虚机的资源池，下面有定义
+  resource_pool: services-small
   template: mysql
 - instances: 1
   name: haproxy
   networks:
   - name: services1
     static_ips:
-    - 10.60.28.153
-    default: [dns, gateway] # 默认的网关
+    - 192.168.0.208
+    default: [dns, gateway]
   - name: floating
     static_ips:
-    - 172.16.40.230 # 外部网络的浮动ip
+    - 10.5.50.135
   properties:
-    external_domain: cf-demo.io
+    cluster_ips:
+    - 192.168.0.206
+    - 192.168.0.207
+    external_domain: 140.92.25.12.xip.io
     haproxy_mysql_user: haproxy_check
-    haproxy_stats_password: "123456" #A_PASSWORD_YOU_MAKE_UP
+    haproxy_stats_password: "123456"
     mysql_node:
-      ip: 10.60.28.151
-    nats: # cf nats配置
+      ip: 192.168.0.206
+    nats:
       machines:
-      - 10.60.28.114
-      password: "123456" #NATS_PASSWORD_FROM_CF_RELEASE
-      port: 4223
+      - 140.92.25.12.xip.io
+      password: "c1oudc0w"
+      port: 4222
       user: nats
     network_name: services1
     syslog_aggregator: null
+    proxy:
+      api_username: admin
+      api_password: admin
+      proxy_ips:
+      - 192.168.0.208
+    external_host: p-mysql.140.92.25.12.xip.io
   release: cf-mysql
   resource_pool: services-small
-  template: haproxy
+  template: proxy
 - instances: 1
   name: cf-mysql-broker
   networks:
   - name: services1
     static_ips:
-    - 10.60.28.154
+    - 192.168.0.210
+    default: [dns, gateway]
+  - name: floating
+    static_ips:
+    - 10.5.50.137
   properties:
-    auth_password: "123456" #A_PASSWORD_YOU_MAKE_UP
-    auth_username: "tester" #A_USERNAME_YOU_MAKE_UP
-    cc_api_uri: "http://api.cf-demo.io" #YOUR_CF_API_URI
-    cookie_secret: "123456" #A_PASSWORD_YOU_MAKE_UP
-    external_host: p-mysql.cf-demo.io #YOUR_CF_DOMAIN
+    auth_password: "123456"
+    auth_username: "tester"
+    cc_api_uri: "http://api.140.92.25.12.xip.io"
+    cookie_secret: "123456"
+    external_host: "p-mysql.140.92.25.12.xip.io"
     max_user_connections_default: 40
     mysql_node:
-      admin_password: "123456" #A_PASSWORD_YOU_MAKE_UP
-      host: 10.60.28.151
+      admin_password: "123456"
+      host: 192.168.0.206
       persistent_disk: 4096
     nats:
       machines:
-      - 10.60.28.114
-      password: "123456" #NATS_PASSWORD_FROM_CF_RELEASE
-      port: 4223
+      - 140.92.25.12
+      password: "c1oudc0w"
+      port: 4222
       user: nats
     network_name: services1
     networks:
@@ -85,7 +99,7 @@ jobs:
     services:
     - dashboard_client:
         id: p-mysql
-        secret: "123456" #A_PASSWORD_YOU_MAKE_UP
+        secret: "p-123456"
       description: A MySQL service for application development and testing
       id: 44b26033-1f54-4087-b7bc-da9652c2a539
       metadata:
@@ -133,29 +147,29 @@ jobs:
         name: 1gb-dev
       tags:
       - mysql
-    skip_ssl_validation: false
+    skip_ssl_validation: true
     ssl_enabled: true
     syslog_aggregator: null
   release: cf-mysql
   resource_pool: services-small
   template: cf-mysql-broker
 - instances: 1
-  lifecycle: errand # 单次运行的任务，非服务
-  name: broker-registrar # 注册mysql-broker到cf
+  lifecycle: errand 
+  name: broker-registrar 
   networks:
   - name: services1
     static_ips:
-    - 10.60.28.154
+    - 192.168.0.210
   properties:
     broker:
-      host: p-mysql.cf-demo.io #YOUR_CF_DOMAIN
+      host: p-mysql.140.92.25.12.xip.io
       name: p-mysql
-      password: "123456" #A_PASSWORD_YOU_MAKE_UP
-      username: "tester" #A_USERNAME_YOU_MAKE_UP
+      password: "123456"
+      username: "tester"
     cf:
-      admin_password: "admin" #YOUR_CF_ADMIN_PASSWORD
-      admin_username: "admin" #YOUR_CF_ADMIN_USERNAME
-      api_url: "api.cf-demo.io" #YOUR_CF_API_URI
+      admin_password: "c1oudc0w"
+      admin_username: "admin"
+      api_url: "api.140.92.25.12.xip.io"
   release: cf-mysql
   resource_pool: services-small
   template: broker-registrar
@@ -165,17 +179,17 @@ jobs:
   networks:
   - name: services1
     static_ips:
-    - 10.60.28.154
+    - 192.168.0.210
   properties:
     broker:
-      host: p-mysql.cf-demo.io # YOUR_CF_DOMAIN
+      host: p-mysql.140.92.25.12.xip.io
       name: p-mysql
-      password: "123456" #A_PASSWORD_YOU_MAKE_UP
-      username: "tester" #A_USERNAME_YOU_MAKE_UP
+      password: "123456"
+      username: "tester"
     cf:
-      admin_password: "admin" # YOUR_CF_ADMIN_PASSWORD
-      admin_username: "admin" #YOUR_CF_ADMIN_USERNAME
-      api_url: "api.cf-demo.io" #YOUR_CF_API_URI
+      admin_password: "c1oudc0w"
+      admin_username: "admin"
+      api_url: "api.140.92.25.12.xip.io"
   release: cf-mysql
   resource_pool: services-small
   template: broker-deregistrar
@@ -190,38 +204,38 @@ jobs:
 #    port: 4222
 #    user: nats
 #  syslog_aggregator: null
-name: cf-demo-mysql-test
-networks: # 部署用到的网络的定义
+name: cf-mysql
+networks:
 - name: services1
   subnets:
   - cloud_properties:
-      net_id: eb7a0287-1f62-44bf-98c0-2345c802756a # 网络id
-      subnet: 6b2ddea5-b562-44b2-9de2-f6e6196f3dde # 子网id
-    dns:# dns服务器
-    - 10.60.28.50
-    gateway: 10.60.28.254 # 该网络的网关
-    range: 10.60.28.0/24 # 该网络所有的ip
-    reserved: # 保留的ip，bosh部署时，不会从这里分配
-    - 10.60.28.1 - 10.60.28.150
-    static: # 部署时，从这个范围分配ip
-    - 10.60.28.151 - 10.60.28.160
+      net_id: 50e2b566-e5a6-4dcd-bf02-d7614dd76649
+      subnet: 618f4fe0-b2ac-4bc9-b1c8-86fce5ea7dad
+    dns:
+    - 8.8.8.8
+    gateway: 192.168.0.1
+    range: 192.168.0.0/16
+    reserved:
+    - 192.168.0.2 - 192.168.0.200
+    static:
+    - 192.168.0.201 - 192.168.0.210
   type: manual
-- name: floating # 浮动ip定义
+- name: floating
   type: vip
   cloud_properties: {}
 properties: {}
 releases:
 - name: cf-mysql
-  version: 11
-resource_pools: # 部署用到的虚机池
+  version: 24
+resource_pools:
 - cloud_properties:
     instance_type: m1.small
   name: services-small
   network: services1
   size: 5
   stemcell:
-    name: bosh-openstack-kvm-ubuntu
-    version: 2427
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
 update:
   canaries: 1
   canary_watch_time: 30000-600000
