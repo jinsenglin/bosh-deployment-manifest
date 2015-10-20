@@ -1,10 +1,10 @@
-compilation:
-  cloud_properties:
-    instance_type: m1.medium
-  network: services1
-  reuse_compilation_vms: true
-  workers: 1
+name: cf-mysql
 director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e
+
+releases:
+- name: cf-mysql
+  version: 24
+
 jobs:
 - instances: 2
   name: mysql
@@ -13,7 +13,7 @@ jobs:
     static_ips: 
     - 192.168.0.206
     - 192.168.0.207
-  persistent_disk: 4096 
+  persistent_disk: 40960
   properties: 
     database_startup_timeout: 600
     admin_password: "123456" 
@@ -153,58 +153,7 @@ jobs:
   release: cf-mysql
   resource_pool: services-small
   template: cf-mysql-broker
-- instances: 1
-  lifecycle: errand 
-  name: broker-registrar 
-  networks:
-  - name: services1
-    static_ips:
-    - 192.168.0.210
-  properties:
-    broker:
-      host: p-mysql.140.92.25.12.xip.io
-      name: p-mysql
-      password: "123456"
-      username: "tester"
-    cf:
-      admin_password: "c1oudc0w"
-      admin_username: "admin"
-      api_url: "api.140.92.25.12.xip.io"
-  release: cf-mysql
-  resource_pool: services-small
-  template: broker-registrar
-- instances: 1
-  lifecycle: errand
-  name: broker-deregistrar
-  networks:
-  - name: services1
-    static_ips:
-    - 192.168.0.210
-  properties:
-    broker:
-      host: p-mysql.140.92.25.12.xip.io
-      name: p-mysql
-      password: "123456"
-      username: "tester"
-    cf:
-      admin_password: "c1oudc0w"
-      admin_username: "admin"
-      api_url: "api.140.92.25.12.xip.io"
-  release: cf-mysql
-  resource_pool: services-small
-  template: broker-deregistrar
-#meta:
-#  apps_domain: YOUR_APPS_DOMAIN
-#  environment: YOUR_ENVIRONMENT_NAME
-#  external_domain: YOUR_CF_DOMAIN
-#  nats:
-#    machines:
-#    - 10.10.80.11
-#    password: NATS_PASSWORD_FROM_CF_RELEASE
-#    port: 4222
-#    user: nats
-#  syslog_aggregator: null
-name: cf-mysql
+
 networks:
 - name: services1
   subnets:
@@ -223,10 +172,9 @@ networks:
 - name: floating
   type: vip
   cloud_properties: {}
+
 properties: {}
-releases:
-- name: cf-mysql
-  version: 24
+
 resource_pools:
 - cloud_properties:
     instance_type: m1.small
@@ -236,8 +184,17 @@ resource_pools:
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
     version: 3100
+
 update:
   canaries: 1
   canary_watch_time: 30000-600000
   max_in_flight: 1
   update_watch_time: 30000-600000
+
+compilation:
+  cloud_properties:
+    instance_type: m1.medium
+  network: services1
+  reuse_compilation_vms: true
+  workers: 1
+
