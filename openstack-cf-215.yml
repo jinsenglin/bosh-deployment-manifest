@@ -341,12 +341,13 @@ jobs:
   - name: metron_agent
     release: cf
   update: {}
-- instances: 1
+- instances: 2
   name: runner_z1
   networks:
   - name: cf1
     static_ips: 
     - 192.168.0.113
+    - 192.168.0.114
   properties:
     dea_next:
       zone: z1
@@ -986,7 +987,7 @@ properties:
       external_groups: null
       userids_enabled: true
       users:
-      - admin|admin|scim.write,scim.read,openid,cloud_controller.admin,clients.read,clients.write,doppler.firehose
+      - admin|cfadmin|scim.write,scim.read,openid,cloud_controller.admin,clients.read,clients.write,doppler.firehose
     spring_profiles: null
     url: https://uaa.10.5.50.134.xip.io
     user: null
@@ -1038,7 +1039,7 @@ resource_pools:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
     version: latest
 - cloud_properties:
-    instance_type: m1.small
+    instance_type: m1.xlarge
   env:
     bosh:
       password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
