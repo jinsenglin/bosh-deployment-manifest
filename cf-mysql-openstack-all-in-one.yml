@@ -1,0 +1,174 @@
+# manifest references:
+# - https://bosh.io/docs/deployment-manifest.html
+# - https://bosh.io/docs/networks.html
+# - https://bosh.io/docs/openstack-cpi.html#networks
+# - https://bosh.io/docs/openstack-cpi.html#resource-pools
+# - https://bosh.io/docs/openstack-cpi.html#disk-pools
+# - https://github.com/cloudfoundry/cf-mysql-release/blob/v24/jobs/mysql/spec
+# - https://bosh.cloudfoundry.org/jobs/mysql?source=github.com/cloudfoundry/cf-mysql-release&version=24
+# - https://github.com/cloudfoundry/cf-mysql-release/blob/v24/jobs/cf-mysql-broker/spec
+# - https://bosh.cloudfoundry.org/jobs/cf-mysql-broker?source=github.com/cloudfoundry/cf-mysql-release&version=24
+
+# deployment name
+name: cf-mysql-all-in-one
+
+# bosh director uuid
+director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e
+
+# bosh-releases
+releases:
+- {name: cf-mysql, version: 24}
+
+# IaaS network resources
+networks:
+- name: net_private # Defining IaaS network name
+  type: manual
+  subnets:
+  - range: 192.168.0.0/24
+    gateway: 192.168.0.1
+    reserved:				# BOSH does not assign IPs from this range to any VM.
+    - 192.168.0.2 - 192.168.0.90
+    - 192.168.0.100 - 192.168.0.254
+    static:				# BOSH assigns IPs from this range to jobs requesting static IPs.
+    - 192.168.0.91 - 192.168.0.98	# 99 for compiling machine.
+    cloud_properties:
+      net_id: 50e2b566-e5a6-4dcd-bf02-d7614dd76649 #net01
+      subnet: 618f4fe0-b2ac-4bc9-b1c8-86fce5ea7dad #net01_subnet
+- name: net_floating # Defining IaaS network name
+  type: vip
+
+# IaaS cpu/mem/disk/os-image resoures
+resource_pools:
+- name: small-vm # Defining IaaS resourece pool anme
+  network: net_private # Using this IaaS network
+  cloud_properties:
+    instance_type: m1.small
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- name: medium-vm # Defining IaaS resourece pool anme
+  network: net_private # Using this IaaS network
+  cloud_properties:
+    instance_type: m1.medium
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+
+# virtual machines
+jobs:
+- instances: 1
+  name: mysql
+  templates:
+  - {name: mysql, release: cf-mysql}
+  - {name: cf-mysql-broker, release: cf-mysql}
+  networks:
+  - name: net_private # Using this IaaS network for this vm
+    static_ips:
+    - 192.168.0.91
+    default: [dns, gateway]
+  - name: net_floating # Using this IaaS network for this vm
+    static_ips:
+    - 10.5.50.138
+  resource_pool: medium-vm
+  persistent_disk: 40960
+  properties:
+    # common properties
+    network_name: net_private # Using this IaaS network for the syslog aggregator
+    syslog_aggregator: null
+    # properties of mysql
+    database_startup_timeout: 600
+    admin_password: "mysqlrootpass" 
+    max_connections: 1500
+    cluster_ips:
+    - 192.168.0.91
+    seeded_databases: null
+    # properties of cf-mysql-broker
+    auth_username: "broker-admin"
+    auth_password: "broker-pass"
+    cookie_secret: "broker-secret"
+    cc_api_uri: "http://api.10.5.50.134.xip.io" # URL of the CloudFoundry Cloud Controller
+    external_host: "p-mysql.10.5.50.134.xip.io" # Host used to register a route for the broker with the router in cf-release via NATS.
+    max_user_connections_default: 40 # # number of user connections to allow in a plan if not specified
+    mysql_node:
+      admin_password: "mysqlrootpass"
+      host: 10.5.50.138 # Host (DNS) or IP address used by the broker and bound applications to reach the service
+      persistent_disk: 40960 # Size of the persistent disk allocated to the MySQL node for storage
+    nats:
+      machines: # IP of each NATS cluster member.
+      - 192.168.0.102 # Re-use CF NAT Machine
+      user: "nats_user"
+      password: "nats_password"
+      port: 4222
+    networks:
+      broker_network: net_private # Name of the network the broker will get its IP address from
+    skip_ssl_validation: true # Determines whether dashboard verifies SSL certificates when communicating with Cloud Controller and UAA
+    ssl_enabled: false # Determines use of https in dashboard url and in callback uri for calls to UAA
+    services: # https://docs.cloudfoundry.org/services/api.html#catalog-mgmt
+    - dashboard_client:
+        id: mysql
+        secret: "dashboard-secret"
+      description: A MySQL service for application development and testing
+      id: 44b26033-1f54-4087-b7bc-da9652c2a539-jinseng
+      metadata:
+        displayName: MySQL
+        documentationUrl: http://docs.ismb.com/
+        longDescription: Provisioning a service instance creates a MySQL database.
+          Binding applications to the instance creates unique credentials for each
+          application to access the database.
+        providerDisplayName: iSMB.com
+        supportUrl: http://support.ismb.com/
+      name: mysql
+      plans:
+      - description: Shared MySQL Server
+        id: ab08f1bc-e6fc-4b56-a767-ee0fea6e3f20-jinseng
+        max_storage_mb: 100
+        max_user_connections: 20
+        metadata:
+          bullets:
+          - Not for production use - server is not replicated
+          - Shared MySQL server
+          - 100 MB storage
+          - 40 concurrent connections
+          costs:
+          - amount:
+              usd: 0
+            unit: MONTH
+          displayName: 100 MB Dev
+        name: 100mb-dev
+      - description: Shared MySQL Server
+        id: 11d0aa36-dcec-4021-85f5-ea4d9a5c8342-jinseng
+        max_storage_mb: 1000
+        max_user_connections: 40
+        metadata:
+          bullets:
+          - Not for production use - server is not replicated
+          - Shared MySQL server
+          - 1000 MB storage
+          - 40 concurrent connections
+          costs:
+          - amount:
+              usd: 0
+            unit: MONTH
+          displayName: 1 GB Dev
+        name: 1gb-dev
+      tags:
+      - mysql
+
+# global properties
+properties: {}
+
+# about updating task
+update:
+  canaries: 1
+  canary_watch_time: 30000-600000
+  max_in_flight: 1
+  update_watch_time: 30000-600000
+
+# about compiling task
+compilation:
+  cloud_properties:
+    instance_type: m1.medium
+  network: net_private #using this IaaS network
+  reuse_compilation_vms: true
+  workers: 1
+
