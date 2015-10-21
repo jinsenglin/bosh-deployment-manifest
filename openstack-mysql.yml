@@ -86,7 +86,7 @@ jobs:
     mysql_node:
       admin_password: "123456"
       host: 10.5.50.135
-      persistent_disk: 4096
+      persistent_disk: 40960
     nats:
       machines:
       - 140.92.25.12
@@ -180,7 +180,7 @@ resource_pools:
     instance_type: m1.small
   name: services-small
   network: services1
-  size: 5
+  size: 4
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
     version: 3100
