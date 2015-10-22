@@ -137,7 +137,7 @@ jobs:
   networks:
   - name: floating
     static_ips:
-    - 10.5.50.139
+    - 140.92.27.254
   - name: cf1
     default: [dns, gateway]
     static_ips:
@@ -148,50 +148,50 @@ jobs:
       ssl_ciphers: null
       ssl_pem: |+
         -----BEGIN CERTIFICATE-----
-        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
+        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
         -----END CERTIFICATE-----
         -----BEGIN RSA PRIVATE KEY-----
-        MIIEpQIBAAKCAQEAzylZL7/HkBwJ5hnkfmfunWQnKgKQNyMTCia3orDsIu6iL0BY
-        C5M5d34KaQFP/dg6fMKCCXOSAo+9rD36PO9fnDPVqoXTDfrB1Qnqhvfp2jjjMgcY
-        HO+k2aaRF1yMZZRxWA/+4TamTAS4sQKZi9u40zlPxtsTkqVsNRJJEJdUQ2enwNPt
-        acLwDdrsVk0oo7E/LtLqhUKoXuqe3GoYQIROlVc2fwF7nYIF2uWyBSKHkFXW0N74
-        JaMTSI2T4eLn5BEjSjDdgXWsb+yxYVYbyQEuifRCDCqLv2kPmpVzZSg7P7rPtOkD
-        85wcEo4eICrRFRONNIMjdE4xBIogQAi53LhpLQIDAQABAoIBAQC414AIpun9n8cF
-        VR0X3MyACxkW1uqvB9C5QgqgU5SfJqX320W0Lk0cXY4UW2NwcDrfjv5QSJqDRpZK
-        1ZIuRLfevDFt0bKbyp6g5BQrEZHLcO7neIT/bKR+v6y+V4m+KVFo7fzSHt0K/zt8
-        VYGD1S146q5QFLHGK2v9fq9K6nv5Fys9zlHIp5okjTxVhraXKZw802st4ZOVRdg/
-        6Iz378BKPPALbZ/LXcQ0yyvuO0oYnwIm/bl3BucRI5FQkYuPJCqnidHNjXeKljkI
-        ksCx6ryhkz0RIei8NM+HmumzPPPrU5pypLU6nIr19E1shTRNutBnmIQ7vwPqlswk
-        f6AJQCeBAoGBAP0jo/2kMnucTLyALvy3XSLOMk8tVzm5GDL5Cc2p+ZgpJnf4QcSp
-        bs99CGAPv8VOUJnachW0KpqySkdjpVD39xUDb7KxBrGaBH2q2f8Lj/JR9aOzRfBB
-        wnsB/5/wtOcgEpl7e2JrvlCh5CjPu6/9tIpRylGGDimwsyMPWhMK0t8pAoGBANGA
-        sHR6Yatk08qAxWxJfRcdBGMXSBQ0wwEzYeqEn92NURPyFjmDtvbA+2tPGbMX5ovB
-        YjfTaRq1NiwGutkzPAmjG6AkyhZPkaT/7cYJsJAh3FZJNQv+ICDuWH7CkzQBpP/b
-        4r+H5MZeTC/naAiUdZd6MSjWwMY6+qpYtuWupS5lAoGBAO0bFx4bUJXr3wypXFmm
-        Pvy8+u6i35LXxszn68DSN1HJKZkx1hipQ3vh95hS6COdqW2S6U1fBpED8wNPWKew
-        u6TZJSTRIB32z8IN6Ec2w0wMbPM6loXmco3ZX2CmjCv5JLLSsM2NciQAn7+CZKEC
-        GLt+xOz7jgSK2CA83vf7KW2RAoGBALS6p35T9N2+ZVZUL/tyig7eYWJ6OxvzSCZJ
-        BTcioiamOkNSnAmRrsy/PiUcX7c37xKxCOHP5uO7X7grNhUZNbm6k6JbGlqU2bfV
-        cHFe+oncLA/jp3dpCp5d/smbYRGEOarfLYS83oah4meQ4RZFvAuoxa/NUw+u4X8C
-        eQU63BRhAoGAMGWBvs+WVoDbq2VhSiibcPCWkLWLytJRH09BhmxJYVlRnJZT4gFB
-        zydkzOrt9SYZm9akxvN0m2r/d6ds8XNjj8Aj4wjDHL7yJLtyc28ZK0euGMGjVtDr
-        mXgpaqnu6DgKF5422PZvw86rd30TqPF8vErPpwqM/MCZa+dSrjVxebA=
+        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
         -----END RSA PRIVATE KEY-----
     metron_agent:
       zone: z1
@@ -570,7 +570,7 @@ jobs:
 properties:
   acceptance_tests: null
   app_domains:
-  - 10.5.50.139.xip.io
+  - 140.92.27.254.xip.io
   app_ssh: null
   cc:
     allow_app_ssh_access: true
@@ -737,7 +737,7 @@ properties:
       - destination: 0.0.0.0/0
         ports: "53"
         protocol: udp
-    srv_api_uri: https://api.10.5.50.139.xip.io
+    srv_api_uri: https://api.140.92.27.254.xip.io
     stacks: null
     staging_upload_password: password
     staging_upload_user: username
@@ -828,7 +828,7 @@ properties:
     staging_memory_limit_mb: 1024
   description: Cloud Foundry sponsored by Pivotal
   disk_quota_enabled: true
-  domain: 10.5.50.139.xip.io
+  domain: 140.92.27.254.xip.io
   doppler:
     blacklisted_syslog_ranges: null
     debug: false
@@ -851,7 +851,7 @@ properties:
       password: nats_password
       username: nats_user
   hm9000:
-    url: https://hm9000.10.5.50.139.xip.io
+    url: https://hm9000.140.92.27.254.xip.io
   logger_endpoint:
     port: 4443
   loggregator:
@@ -874,9 +874,9 @@ properties:
     enabled: true
     invitations_enabled: null
     links:
-      home: https://console.10.5.50.139.xip.io
+      home: https://console.140.92.27.254.xip.io
       network: null
-      passwd: https://console.10.5.50.139.xip.io/password_resets/new
+      passwd: https://console.140.92.27.254.xip.io/password_resets/new
       signup: https://console.10.5.50.134.xip.io/register
       signup-network: null
     logout:
@@ -965,7 +965,7 @@ properties:
     skip_cert_verify: true
   support_address: http://support.cloudfoundry.com
   syslog_daemon_config: null
-  system_domain: 10.5.50.139.xip.io
+  system_domain: 140.92.27.254.xip.io
   system_domain_organization: null
   traffic_controller:
     outgoing_port: 8080
@@ -989,7 +989,7 @@ properties:
         authorities: app_direct_invoice.write
         authorized-grant-types: authorization_code,client_credentials,password,refresh_token,implicit
         override: true
-        redirect-uri: https://console.10.5.50.139.xip.io
+        redirect-uri: https://console.140.92.27.254.xip.io
         refresh-token-validity: 1209600
         secret: app-direct-secret
       cc-service-dashboards:
@@ -1006,7 +1006,7 @@ properties:
         authorities: scim.write,scim.read,cloud_controller.read,cloud_controller.write,password.write,uaa.admin,uaa.resource,cloud_controller.admin,billing.admin
         authorized-grant-types: authorization_code,client_credentials
         override: true
-        redirect-uri: https://console.10.5.50.139.xip.io/oauth/callback
+        redirect-uri: https://console.140.92.27.254.xip.io/oauth/callback
         refresh-token-validity: 1209600
         scope: openid,cloud_controller.read,cloud_controller.write,password.write,console.admin,console.support
         secret: console-secret
@@ -1023,7 +1023,7 @@ properties:
         authorities: oauth.login,scim.write,clients.read,notifications.write,critical_notifications.write,emails.write,scim.userids,password.write
         authorized-grant-types: authorization_code,client_credentials,refresh_token
         override: true
-        redirect-uri: https://login.10.5.50.139.xip.io
+        redirect-uri: https://login.140.92.27.254.xip.io
         scope: openid,oauth.approvals
         secret: login_client_secret
       notifications:
@@ -1036,7 +1036,7 @@ properties:
       max_connections: 100
       max_idle_connections: 10
       remove_abandoned: true
-    issuer: https://uaa.10.5.50.139.xip.io
+    issuer: https://uaa.140.92.27.254.xip.io
     jwt:
       signing_key: |+
         -----BEGIN RSA PRIVATE KEY-----
@@ -1081,7 +1081,7 @@ properties:
       users:
       - admin|cfadmin|scim.write,scim.read,openid,cloud_controller.admin,clients.read,clients.write,doppler.firehose
     spring_profiles: null
-    url: https://uaa.10.5.50.139.xip.io
+    url: https://uaa.140.92.27.254.xip.io
     user: null
     zones: null
   uaadb:
