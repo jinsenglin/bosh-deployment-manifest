@@ -535,9 +535,11 @@ properties:
     default_quota_definition: default
     default_running_security_groups:
     - public_networks
+    - private_networks
     - dns
     default_staging_security_groups:
     - public_networks
+    - private_networks
     - dns
     default_to_diego_backend: false
     development_mode: false
@@ -637,6 +639,14 @@ properties:
         protocol: all
       - destination: 192.169.0.0-255.255.255.255
         protocol: all
+    - name: private_networks
+      rules:
+      - protocol: all
+        destination: 10.0.0.0-10.255.255.255
+      - protocol: all
+        destination: 172.16.0.0-172.31.255.255
+      - protocol: all
+        destination: 192.168.0.0-192.168.255.255
     - name: dns
       rules:
       - destination: 0.0.0.0/0
