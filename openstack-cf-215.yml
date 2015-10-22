@@ -1,16 +1,110 @@
-compilation:
-  cloud_properties:
-    instance_type: m1.medium
-  network: cf1
-  reuse_compilation_vms: true
-  workers: 6
+# Defining Deployment name
+name: cf-on-openstack
+
+# Using this BOSH director uuid
+director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e
+
+# Using these BOSH releases
+releases:
+- {name: cf, version: 215}
+
+#
 meta:
   environment: cf-on-openstack
   releases:
   - name: cf
     version: 215
-name: cf-on-openstack
-director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e
+
+# Defining IaaS network resources
+networks:
+- name: cf1
+  type: manual
+  subnets:
+  - cloud_properties: {net_id: 50e2b566-e5a6-4dcd-bf02-d7614dd76649}
+    range: 192.168.0.0/24
+    gateway: 192.168.0.1
+    dns: [8.8.8.8]
+    static:
+    - 192.168.0.100 - 192.168.0.200
+    reserved:
+    - 192.168.0.2 - 192.168.0.5
+- name: floating
+  type: vip
+
+# Defining IaaS cpu/mem/disk/os-image resources
+resource_pools:
+- name: small_z1
+  cloud_properties:
+    instance_type: m1.small
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- cloud_properties:
+    instance_type: m1.small
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  name: medium_z1
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- name: large_z1
+  cloud_properties:
+    instance_type: m1.large
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- name: runner_z1
+  cloud_properties:
+    instance_type: m1.xlarge
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- name: router_z1
+  cloud_properties:
+    instance_type: m1.small
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- name: small_errand
+  cloud_properties:
+    instance_type: m1.small
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- name: xlarge_errand
+  cloud_properties:
+    instance_type: m1.large
+  env:
+    bosh:
+      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
+  network: cf1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+
+# virutal-machines
 jobs:
 - instances: 1
   name: consul_z1
@@ -471,20 +565,8 @@ jobs:
   templates:
   - name: smoke-tests
     release: cf
-networks:
-- name: cf1
-  type: manual
-  subnets:
-  - cloud_properties: {net_id: 50e2b566-e5a6-4dcd-bf02-d7614dd76649}
-    range: 192.168.0.0/24
-    gateway: 192.168.0.1
-    dns: [8.8.8.8]
-    static:
-    - 192.168.0.100 - 192.168.0.200
-    reserved:
-    - 192.168.0.2 - 192.168.0.5
-- name: floating
-  type: vip
+
+# Global properties
 properties:
   acceptance_tests: null
   app_domains:
@@ -1014,84 +1096,20 @@ properties:
     - name: uaaadmin
       password: uaaadmin_password
       tag: admin
-releases:
-- name: cf
-  version: 215
-resource_pools:
-- cloud_properties:
-    instance_type: m1.small
-  env:
-    bosh:
-      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  name: small_z1
-  network: cf1
-  stemcell:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: latest
-- cloud_properties:
-    instance_type: m1.small
-  env:
-    bosh:
-      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  name: medium_z1
-  network: cf1
-  stemcell:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: latest
-- cloud_properties:
-    instance_type: m1.large
-  env:
-    bosh:
-      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  name: large_z1
-  network: cf1
-  stemcell:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: latest
-- cloud_properties:
-    instance_type: m1.xlarge
-  env:
-    bosh:
-      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  name: runner_z1
-  network: cf1
-  stemcell:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: latest
-- cloud_properties:
-    instance_type: m1.small
-  env:
-    bosh:
-      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  name: router_z1
-  network: cf1
-  stemcell:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: latest
-- cloud_properties:
-    instance_type: m1.small
-  env:
-    bosh:
-      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  name: small_errand
-  network: cf1
-  stemcell:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: latest
-- cloud_properties:
-    instance_type: m1.large
-  env:
-    bosh:
-      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  name: xlarge_errand
-  network: cf1
-  stemcell:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: latest
+
+# About updating task
 update:
   canaries: 1
   canary_watch_time: 30000-600000
   max_in_flight: 1
   serial: true
   update_watch_time: 5000-600000
+
+# About compiling task
+compilation:
+  cloud_properties:
+    instance_type: m1.medium
+  network: cf1
+  reuse_compilation_vms: true
+  workers: 6
 
