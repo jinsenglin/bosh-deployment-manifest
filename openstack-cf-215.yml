@@ -43,12 +43,12 @@ resource_pools:
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
     version: 3100
-- cloud_properties:
-    instance_type: m1.small
+- name: medium_z1
+  cloud_properties:
+    instance_type: m1.medium
   env:
     bosh:
       password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  name: medium_z1
   network: cf1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
@@ -63,19 +63,9 @@ resource_pools:
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
     version: 3100
-- name: runner_z1
+- name: xlarge_z1
   cloud_properties:
     instance_type: m1.xlarge
-  env:
-    bosh:
-      password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
-  network: cf1
-  stemcell:
-    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3100
-- name: router_z1
-  cloud_properties:
-    instance_type: m1.small
   env:
     bosh:
       password: $6$4gDD3aV0rdqlrKC$2axHCxGKIObs6tAmMTqYCspcdvQXh3JJcvWOY2WGb4SrdXtnCyNaWlrf3WEqvYR2MYizEGp3kMmbpwBC6jsHt0
@@ -93,7 +83,7 @@ resource_pools:
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
     version: 3100
-- name: xlarge_errand
+- name: large_errand
   cloud_properties:
     instance_type: m1.large
   env:
@@ -200,7 +190,7 @@ jobs:
       servers:
         z1:
         - 192.168.0.105
-  resource_pool: router_z1
+  resource_pool: medium_z1
   templates:
   - name: haproxy
     release: cf
@@ -221,7 +211,7 @@ jobs:
       deployment: cf-on-openstack
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: nats
     release: cf
@@ -243,7 +233,7 @@ jobs:
       deployment: cf-on-openstack
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: etcd
     release: cf
@@ -283,7 +273,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: debian_nfs_server
     release: cf
@@ -303,7 +293,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: postgres
     release: cf
@@ -324,7 +314,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: uaa
     release: cf
@@ -337,7 +327,7 @@ jobs:
   name: api_z1
   networks:
   - name: cf1
-  persistent_disk: 8192
+  persistent_disk: 81920
   properties:
     consul:
       agent:
@@ -382,7 +372,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: cloud_controller_clock
     release: cf
@@ -407,7 +397,7 @@ jobs:
       - 140.0.0.0/8
       - 10.0.0.0/8
       share: null
-  resource_pool: small_z1
+  resource_pool: medium_z1
   templates:
   - name: cloud_controller_worker
     release: cf
@@ -428,7 +418,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: hm9000
     release: cf
@@ -450,7 +440,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: runner_z1
+  resource_pool: xlarge_z1
   templates:
   - name: dea_next
     release: cf
@@ -472,7 +462,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: doppler
     release: cf
@@ -493,7 +483,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: medium_z1
+  resource_pool: small_z1
   templates:
   - name: doppler
     release: cf
@@ -537,7 +527,7 @@ jobs:
       zone: z1
     networks:
       apps: cf1
-  resource_pool: router_z1
+  resource_pool: small_z1
   templates:
   - name: gorouter
     release: cf
