@@ -1,0 +1,108 @@
+---
+name: mongodb
+director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e #use bosh status for obtain it
+
+releases:
+ - name: mongo-cluster
+   version: 8
+
+# BOSH configuration
+compilation:
+  workers: 2
+  network: net_private
+  reuse_compilation_vms: true
+  cloud_properties:
+    instance_type: m1.small
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-600000
+  update_watch_time: 30000-600000
+  max_in_flight: 4
+  max_errors: 1
+
+# Network configuration (the same as in CF)
+# IaaS network resources
+networks:
+- name: net_private # Defining IaaS network name
+  type: manual
+  subnets:
+  - range: 192.168.0.0/24
+    gateway: 192.168.0.1
+    reserved:				# BOSH does not assign IPs from this range to any VM.
+    - 192.168.0.2 - 192.168.0.80
+    - 192.168.0.90 - 192.168.0.254
+    static:				# BOSH assigns IPs from this range to jobs requesting static IPs.
+    - 192.168.0.81 - 192.168.0.85	# 86-89 for compiling machine.
+    cloud_properties:
+      net_id: 50e2b566-e5a6-4dcd-bf02-d7614dd76649 #net01
+      subnet: 618f4fe0-b2ac-4bc9-b1c8-86fce5ea7dad #net01_subnet
+
+# Pull for your databases and infrastructure nodes
+# IaaS cpu/mem/disk/os-image resoures
+resource_pools:
+- name: small-vm # Defining IaaS resourece pool anme
+  network: net_private # Using this IaaS network
+  cloud_properties:
+    instance_type: m1.small
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- name: medium-vm # Defining IaaS resourece pool anme
+  network: net_private # Using this IaaS network
+  cloud_properties:
+    instance_type: m1.medium
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+
+# virtual machines
+jobs:
+  # Some infrastructure jobs
+  - name: core
+    templates:
+      - {name: nats, release: mongo-cluster}
+      - {name: mongodb_service_broker, release: mongo-cluster}
+    instances: 1
+    resource_pool: small-vm
+    persistent_disk: 8192
+    networks:
+    - name: net_private
+      static_ips:
+      - 192.168.0.81
+      default: [dns, gateway]
+    properties:
+      username: admin # Authentication properties for service broker
+      password: Password
+
+  # This job is your MongoDB nodes
+  - name: mongo
+    templates:
+      - {name: mongodb, release: mongo-cluster}
+    instances: 3
+    resource_pool: medium-vm
+    persistent_disk: 65536 # Disk size for database (in megabytes)
+    networks:
+    - name: net_private
+      static_ips:
+      - 192.168.0.82
+      - 192.168.0.83
+      - 192.168.0.84
+      default: [dns, gateway]
+
+# global properties
+properties:
+  nats:
+    machines:
+      - 192.168.0.81
+    port: 4222
+    user: nats
+    password: Password #<your NATS Password>
+    authorization_timeout: 5
+  networks:
+    apps: net_private
+  mongodb:
+    broker:
+      username: admin
+      password: Password
+      host: 192.168.0.81 # Host to bind service broker
