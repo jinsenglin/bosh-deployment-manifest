@@ -21,7 +21,6 @@ update:
   max_in_flight: 4
   max_errors: 1
 
-# Network configuration (the same as in CF)
 # IaaS network resources
 networks:
 - name: net_private # Defining IaaS network name
