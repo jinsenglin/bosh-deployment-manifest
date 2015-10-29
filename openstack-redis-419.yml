@@ -1,0 +1,125 @@
+---
+name: cf-redis
+director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e # CHANGE THIS
+
+releases:
+- name: cf-redis
+  version: 419
+
+# BOSH configuration
+compilation:
+  workers: 2
+  network: net_private	# CHECK THIS
+  reuse_compilation_vms: true
+  cloud_properties:
+    instance_type: m1.small # CHECK THIS
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 4
+
+# IaaS network resources
+networks:
+- name: net_private # Defining IaaS network name
+  type: manual
+  subnets:
+  - range: 192.168.0.0/24
+    gateway: 192.168.0.1
+    reserved:				# BOSH does not assign IPs from this range to any VM.
+    - 192.168.0.2 - 192.168.0.70	# CHANGE THIS
+    - 192.168.0.80 - 192.168.0.254	# CHANGE THIS
+    static:				# BOSH assigns IPs from this range to jobs requesting static IPs.
+    - 192.168.0.71 - 192.168.0.75	# CHANGE THIS: 76-79 for compiling machine.
+    cloud_properties:
+      net_id: 50e2b566-e5a6-4dcd-bf02-d7614dd76649 #net01
+      subnet: 618f4fe0-b2ac-4bc9-b1c8-86fce5ea7dad #net01_subnet
+
+# IaaS cpu/mem/disk/os-image resoures
+resource_pools:
+- name: small-vm # Defining IaaS resourece pool anme
+  network: net_private # Using this IaaS network
+  cloud_properties:
+    instance_type: m1.small
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+- name: medium-vm # Defining IaaS resourece pool anme
+  network: net_private # Using this IaaS network
+  cloud_properties:
+    instance_type: m1.medium
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: 3100
+
+jobs:
+  - name: cf-redis-broker
+    templates:
+    - {name: cf-redis-broker, release: cf-redis}
+    - {name: syslog-configurator, release: cf-redis}
+    instances: 1
+    resource_pool: small-vm # CHECK THIS
+    persistent_disk: 4096
+    networks:
+    - name: net_private # CHECK THIS
+      static_ips:
+      - 192.168.0.71 # CHANGE THIS
+    properties:
+      redis:
+        config_command: config
+        save_command: save
+        bg_save_command: bgsave
+
+  - name: dedicated-node
+    templates:
+    - {name: dedicated-node, release: cf-redis}
+    - {name: syslog-configurator, release: cf-redis}
+    instances: 3
+    resource_pool: small-vm # CHECK THIS
+    persistent_disk: 4096
+    networks:
+    - name: net_private # CHECK THIS
+      static_ips:
+      - 192.168.0.72 # CHANGE THIS
+      - 192.168.0.73
+      - 192.168.0.74
+
+properties:
+  broker:
+    name: redis
+    host: REPLACE_WITH redis-broker.<CF_APP_DOMAIN>
+    username: admin
+    password: admin # REPLACE_WITH_BROKER_PASSWORD
+  syslog_aggregator: null
+#    address: REPLACE_WITH_SYSLOG_AGGREGATOR_HOST
+#    port: REPLACE_WITH_SYSLOG_AGGREGATOR_PORT
+  cf:
+    api_url: https://api.140.92.27.254.xip.io # REPLACE_WITH_CLOUD_FOUNDRY_TARGET
+    apps_domain: 140.92.27.254.xip.io
+    admin_username: admin # REPLACE_WITH_CLOUD_FOUNDRY_ADMIN_USERNAME
+    admin_password: cfadmin # REPLACE_WITH_CLOUD_FOUNDRY_ADMIN_PASSWORD
+    nats:
+      host: 192.168.0.102 # REPLACE_WITH_NATS_HOST
+      port: 4222 # REPLACE_WITH_NATS_PORT
+      username: nats_user # REPLACE_WITH_NATS_USERNAME
+      password: nats_password # REPLACE_WITH_NATS_PASSWORD
+  redis:
+    broker:
+      network: net_private # CHECK THIS
+      service_instance_limit: 3
+      dedicated_nodes:
+      - 192.168.0.72
+      - 192.168.0.73
+      - 192.168.0.74
+      auth:
+        username: admin
+        password: admin # REPLACE_WITH_BROKER_PASSWORD
+      backend_host: 192.168.0.71
+      backups:
+        path:
+        access_key_id:
+        secret_access_key:
+        endpoint_url:
+        bucket_name:
+
