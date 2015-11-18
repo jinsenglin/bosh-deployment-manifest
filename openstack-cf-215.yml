@@ -2,25 +2,25 @@
 name: cf-on-openstack
 
 # Using this BOSH director uuid
-director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e
+director_uuid: 0f70e180-7a57-462c-aee7-442904d8f0b1
 
 # Using these BOSH releases
 releases:
-- {name: cf, version: 215}
+- {name: cf, version: 215+dev.2}
 
 #
 meta:
   environment: cf-on-openstack
   releases:
   - name: cf
-    version: 215
+    version: 215+dev.2
 
 # Defining IaaS network resources
 networks:
 - name: cf1
   type: manual
   subnets:
-  - cloud_properties: {net_id: 50e2b566-e5a6-4dcd-bf02-d7614dd76649}
+  - cloud_properties: {net_id: 3952ebe4-9b6f-4589-9dec-7e932cf30b96}
     range: 192.168.0.0/24
     gateway: 192.168.0.1
     dns: [8.8.8.8]
@@ -42,7 +42,7 @@ resource_pools:
   network: cf1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3100
+    version: 3139
 - name: medium_z1
   cloud_properties:
     instance_type: m1.medium
@@ -52,7 +52,7 @@ resource_pools:
   network: cf1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3100
+    version: 3139
 - name: large_z1
   cloud_properties:
     instance_type: m1.large
@@ -62,7 +62,7 @@ resource_pools:
   network: cf1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3100
+    version: 3139
 - name: xlarge_z1
   cloud_properties:
     instance_type: m1.xlarge
@@ -72,7 +72,7 @@ resource_pools:
   network: cf1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3100
+    version: 3139
 - name: small_errand
   cloud_properties:
     instance_type: m1.small
@@ -82,7 +82,7 @@ resource_pools:
   network: cf1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3100
+    version: 3139
 - name: large_errand
   cloud_properties:
     instance_type: m1.large
@@ -92,7 +92,7 @@ resource_pools:
   network: cf1
   stemcell:
     name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-    version: 3100
+    version: 3139
 
 # virutal-machines
 jobs:
@@ -680,7 +680,7 @@ properties:
         enabled: true
         record_sql: obfuscated
     packages:
-      app_package_directory_key: 10.5.50.134.xip.io-cc-packages
+      app_package_directory_key: 140.92.27.254.xip.io-cc-packages
       cdn: null
       fog_connection:
         local_root: /var/vcap/store
@@ -697,7 +697,7 @@ properties:
       fog_connection:
         local_root: /var/vcap/store
         provider: Local
-      resource_directory_key: 10.5.50.134.xip.io-cc-resources
+      resource_directory_key: 140.92.27.254.xip.io-cc-resources
     security_group_definitions:
     - name: public_networks
       rules:
@@ -867,7 +867,7 @@ properties:
       home: https://console.140.92.27.254.xip.io
       network: null
       passwd: https://console.140.92.27.254.xip.io/password_resets/new
-      signup: https://console.10.5.50.134.xip.io/register
+      signup: https://console.140.92.27.254.xip.io/register
       signup-network: null
     logout:
       redirect:
