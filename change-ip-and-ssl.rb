@@ -1,7 +1,5 @@
 require 'yaml'
 
-puts 'NOT YET TESTED'
-
 oldyml = ARGV[0]
 newyml = ARGV[1]
 oldip = ARGV[2]
