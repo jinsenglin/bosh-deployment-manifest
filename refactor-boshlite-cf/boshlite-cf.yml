@@ -1,96 +1,96 @@
-# top level config order
+# Top level config order
 #
 # 01.	name
 # 02.	director_uuid
 # 03.	meta
 # 04.	releases
 # 05.	jobs
-	- consul_z1				/1	*
-	- consul_z2				/0
-	- ha_proxy_z1				/1	*
-	- nats_z1				/1	*
-	- nats_z2				/0
-	- etcd_z1				/1	*
-	- etcd_z2				/0
-	- stats_z1				/0
-	- nfs_z1				/0
-	- postgres_z1				/1	*
-	- uaa_z1				/1	*
-	- uaa_z2				/0
-	- api_z1				/1	*
-	- api_z2				/0
-	- clock_global				/0
-	- api_worker_z1				/0
-	- api_worker_z2				/0
-	- hm9000_z1				/1	*
-	- hm9000_z2				/0
-	- runner_z1				/1	*
-	- runner_z2				/0
-	- loggregator_z1			/0
-	- loggregator_z2			/0
-	- doppler_z1				/1	*
-	- doppler_z2				/0
-	- loggregator_trafficcontroller_z1	/1	*
-	- loggregator_trafficcontroller_z2	/0
-	- router_z1				/1	*
-	- router_z2				/0
-	- acceptance_tests			/1	errand
-	- smoke_tests				/1	errand
+#	- consul_z1				/1	*
+#	- consul_z2				/0
+#	- ha_proxy_z1				/1	*
+#	- nats_z1				/1	*
+#	- nats_z2				/0
+#	- etcd_z1				/1	*
+#	- etcd_z2				/0
+#	- stats_z1				/0
+#	- nfs_z1				/0
+#	- postgres_z1				/1	*
+#	- uaa_z1				/1	*
+#	- uaa_z2				/0
+#	- api_z1				/1	*
+#	- api_z2				/0
+#	- clock_global				/0
+#	- api_worker_z1				/0
+#	- api_worker_z2				/0
+#	- hm9000_z1				/1	*
+#	- hm9000_z2				/0
+#	- runner_z1				/1	*
+#	- runner_z2				/0
+#	- loggregator_z1			/0
+#	- loggregator_z2			/0
+#	- doppler_z1				/1	*
+#	- doppler_z2				/0
+#	- loggregator_trafficcontroller_z1	/1	*
+#	- loggregator_trafficcontroller_z2	/0
+#	- router_z1				/1	*
+#	- router_z2				/0
+#	- acceptance_tests			/1	errand
+#	- smoke_tests				/1	errand
 # 06.	properties
-	- acceptance_tests
-	- app_domains
-	- app_ssh
-	- cc
-	- ccdb
-	- collector
-	- consul
-	- databases
-	- dea_next
-	- description
-	- disk_quota_enabled
-	- domain
-	- doppler
-	- doppler_endpoint
-	- dropsonde
-	- etcd
-	- etcd_metrics_server
-	- hm9000
-	- logger_endpoint
-	- loggregator
-	- loggregator_endpoint
-	- login
-	- metron_agent
-	- metron_endpoint
-	- nats
-	- nfs_server
-	- request_timeout_in_seconds
-	- router
-	- smoke_tests
-	- ssl
-	- support_address
-	- syslog_daemon_config
-	- system_domain
-	- system_domain_organization
-	- uaa
-	- uaadb
+#	- acceptance_tests
+#	- app_domains
+#	- app_ssh
+#	- cc
+#	- ccdb
+#	- collector
+#	- consul
+#	- databases
+#	- dea_next
+#	- description
+#	- disk_quota_enabled
+#	- domain
+#	- doppler
+#	- doppler_endpoint
+#	- dropsonde
+#	- etcd
+#	- etcd_metrics_server
+#	- hm9000
+#	- logger_endpoint
+#	- loggregator
+#	- loggregator_endpoint
+#	- login
+#	- metron_agent
+#	- metron_endpoint
+#	- nats
+#	- nfs_server
+#	- request_timeout_in_seconds
+#	- router
+#	- smoke_tests
+#	- ssl
+#	- support_address
+#	- syslog_daemon_config
+#	- system_domain
+#	- system_domain_organization
+#	- uaa
+#	- uaadb
 # 07.	resource_pools
-	- small_z1
-	- small_z2
-	- medium_z1
-	- medium_z2
-	- large_z1
-	- large_z2
-	- runner_z1
-	- runner_z2
-	- router_z1
-	- router_z2
-	- small_errand
-	- xlarge_errand
+#	- small_z1
+#	- small_z2
+#	- medium_z1
+#	- medium_z2
+#	- large_z1
+#	- large_z2
+#	- runner_z1
+#	- runner_z2
+#	- router_z1
+#	- router_z2
+#	- small_errand
+#	- xlarge_errand
 # 08.	networks
-	- cf1
-	- cf2
-	- services1
-	- services2
+#	- cf1
+#	- cf2
+#	- services1
+#	- services2
 # 09.	update
 # 10.	compilation
 #
