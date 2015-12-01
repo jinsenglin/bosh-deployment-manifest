@@ -87,10 +87,10 @@
 #	- small_errand
 #	- xlarge_errand
 # 08.	networks
-#	- cf1
-#	- cf2
-#	- services1
-#	- services2
+#	- cf1		# 10.244.0.0/30 ~ 10.244.0.252/30 , 64 subnets
+#	- cf2		# 10.244.2.0/30 ~ 10.244.2.252/30 , 64 subnets
+#	- services1	# 10.244.1.0/30 ~ 10.244.1.252/30 , 64 subnets
+#	- services2	# 10.244.3/0/30 ~ 10.244.3.252/30 , 64 subbets
 # 09.	update
 # 10.	compilation
 #
