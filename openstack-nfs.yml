@@ -1,0 +1,69 @@
+---
+name: nfs-openstack
+
+director_uuid: 0f70e180-7a57-462c-aee7-442904d8f0b1
+
+releases:
+- name: cf
+  version: latest
+
+jobs:
+- instances: 1
+  name: nfs
+  networks:
+  - name: nfs-net
+    static_ips:
+    - 192.168.100.252
+    default: [dns, gateway]
+  - name: floating-net
+    static_ips:
+    - 10.5.50.137
+  resource_pool: small
+  persistent_disk: 4096
+  properties:
+    nfs_server:
+      allow_from_entries:
+      - 0.0.0.0/0
+  templates:
+  - {name: debian_nfs_server, release: cf}
+
+properties: {}
+
+networks:
+- name: nfs-net
+  subnets:
+  - cloud_properties:
+      net_id: 1ccbedb7-c05b-41ec-849c-e267cf34de3a
+    dns:
+    - 8.8.8.8
+    gateway: 192.168.100.1
+    range: 192.168.100.0/24
+    static:
+    - 192.168.100.252 - 192.168.100.252
+  type: manual
+- name: floating-net
+  type: vip
+
+resource_pools:
+- name: small
+  size: 1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+  network: nfs-net
+  cloud_properties:
+    instance_type: m1.small
+
+compilation:
+  reuse_compilation_vms: true
+  workers: 1
+  network: nfs-net
+  cloud_properties:
+    instance_type: m1.small
+
+update:
+  canaries: 1
+  canary_watch_time: 1000-30000
+  max_in_flight: 50
+  serial: false
+  update_watch_time: 1000-30000
