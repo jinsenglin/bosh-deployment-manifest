@@ -119,7 +119,7 @@
 # 10.	compilation
 #
 ---
-name: cf-warden
+name: cf-warden-using-external-nfs-postgres
 
 director_uuid: 9bca5701-66c0-43ee-a4d0-64813b4b5ece
 
