@@ -1,0 +1,84 @@
+---
+name: postgres-openstack
+
+director_uuid: 0f70e180-7a57-462c-aee7-442904d8f0b1
+
+releases:
+- name: cf
+  version: latest
+
+jobs:
+- instances: 1
+  name: postgres
+  networks:
+  - name: postgres-net
+    static_ips:
+    - 192.168.100.253
+    default: [dns, gateway]
+  - name: floating-net
+    static_ips:
+    - 10.5.50.140
+  resource_pool: small
+  persistent_disk: 4096
+  properties:
+    databases:
+      db_scheme: postgres
+      address: 192.168.100.253
+      port: 5524
+      databases:
+      - citext: true
+        name: ccdb
+        tag: cc
+      - citext: true
+        name: uaadb
+        tag: uaa
+      roles:
+      - name: ccadmin
+        password: admin
+        tag: admin
+      - name: uaaadmin
+        password: admin
+        tag: admin
+  templates:
+  - {name: postgres, release: cf}
+
+properties: {}
+
+networks:
+- name: postgres-net
+  subnets:
+  - cloud_properties:
+      net_id: 1ccbedb7-c05b-41ec-849c-e267cf34de3a
+    dns:
+    - 8.8.8.8
+    gateway: 192.168.100.1
+    range: 192.168.100.0/24
+    static:
+    - 192.168.100.253 - 192.168.100.253
+  type: manual
+- name: floating-net
+  type: vip
+
+resource_pools:
+- name: small
+  size: 1
+  stemcell:
+    name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+    version: latest
+  network: postgres-net
+  cloud_properties:
+    instance_type: m1.small
+
+compilation:
+  reuse_compilation_vms: true
+  workers: 1
+  network: postgres-net
+  cloud_properties:
+    instance_type: m1.small
+
+update:
+  canaries: 1
+  canary_watch_time: 1000-30000
+  max_in_flight: 50
+  serial: false
+  update_watch_time: 1000-30000
