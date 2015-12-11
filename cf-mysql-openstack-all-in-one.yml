@@ -8,6 +8,10 @@
 # - https://bosh.cloudfoundry.org/jobs/mysql?source=github.com/cloudfoundry/cf-mysql-release&version=24
 # - https://github.com/cloudfoundry/cf-mysql-release/blob/v24/jobs/cf-mysql-broker/spec
 # - https://bosh.cloudfoundry.org/jobs/cf-mysql-broker?source=github.com/cloudfoundry/cf-mysql-release&version=24
+#
+# To register & enable service broker
+# cf create-service-broker mysql-broker broker-admin broker-pass http://192.168.0.91
+# cf enable-service-access mysql
 
 # deployment name
 name: cf-mysql-all-in-one
