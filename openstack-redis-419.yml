@@ -1,3 +1,4 @@
+# Source: https://github.com/pivotal-cf/cf-redis-release
 # To register & enable service broker
 # cf create-service-broker redis-broker admin admin http://192.168.0.71
 # cf enable-service-access redis
