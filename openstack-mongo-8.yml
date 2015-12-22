@@ -1,3 +1,6 @@
+# To register & enable service broker
+# cf create-service-broker mongodb-broker admin Password http://192.168.0.81:7080
+# cf enable-service-access mongodb
 ---
 name: mongodb
 director_uuid: db2e5009-4ea5-4893-8a2e-e7f618e7c54e #use bosh status for obtain it
