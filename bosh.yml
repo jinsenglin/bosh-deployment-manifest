@@ -1,0 +1,139 @@
+---
+name: bosh
+
+releases:
+- name: bosh
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=214
+  sha1: c155e2d5396cf56c1e6819962e17ff5386693663
+- name: bosh-openstack-cpi
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-openstack-cpi-release?v=15
+  sha1: 5d92bc58c23e95745c17fa768566e061327b9367
+
+resource_pools:
+- name: vms
+  network: private
+  stemcell:
+    url: https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent?v=3012
+    sha1: e92f3bd5081301652005bdc3dd11bff545a304ef
+  cloud_properties:
+    instance_type: m1.medium
+
+disk_pools:
+- name: disks
+  disk_size: 20_000
+
+networks:
+- name: private
+  type: manual
+  subnets:
+  - range: 192.168.0.0/16 # <--- Replace with a private subnet CIDR
+    gateway: 192.168.0.1 # <--- Replace with a private subnet's gateway
+    dns: [8.8.8.8] # <--- Replace with your DNS
+    cloud_properties: {net_id: 50e2b566-e5a6-4dcd-bf02-d7614dd76649} # <--- # Replace with private network UUID
+- name: public
+  type: vip
+
+jobs:
+- name: bosh
+  instances: 1
+
+  templates:
+  - {name: nats, release: bosh}
+  - {name: redis, release: bosh}
+  - {name: postgres, release: bosh}
+  - {name: blobstore, release: bosh}
+  - {name: director, release: bosh}
+  - {name: health_monitor, release: bosh}
+  - {name: registry, release: bosh}
+  - {name: cpi, release: bosh-openstack-cpi}
+
+  resource_pool: vms
+  persistent_disk_pool: disks
+
+  networks:
+  - name: private
+    static_ips: [192.168.0.5] # <--- Replace with a private IP
+    default: [dns, gateway]
+  - name: public
+    static_ips: [10.5.50.133] # <--- Replace with a floating IP
+
+  properties:
+    nats:
+      address: 127.0.0.1
+      user: nats
+      password: nats-password
+
+    redis:
+      listen_address: 127.0.0.1
+      address: 127.0.0.1
+      password: redis-password
+
+    postgres: &db
+      listen_address: 127.0.0.1
+      host: 127.0.0.1
+      user: postgres
+      password: postgres-password
+      database: bosh
+      adapter: postgres
+
+    registry:
+      address: 192.168.0.5 # <--- Replace with a private IP
+      host: 192.168.0.5 # <--- Replace with a private IP
+      db: *db
+      http: {user: admin, password: admin, port: 25777}
+      username: admin
+      password: admin
+      port: 25777
+
+    blobstore:
+      address: 192.168.0.5 # <--- Replace with a private IP
+      port: 25250
+      provider: dav
+      director: {user: director, password: director-password}
+      agent: {user: agent, password: agent-password}
+
+    director:
+      address: 127.0.0.1
+      name: my-bosh
+      db: *db
+      cpi_job: cpi
+      max_threads: 3
+      user_management:
+        provider: local
+        local:
+          users:
+          - {name: admin, password: admin}
+          - {name: hm, password: hm-password}
+
+    hm:
+      director_account: {user: hm, password: hm-password}
+      resurrector_enabled: true
+
+    openstack: &openstack
+      auth_url: http://10.5.50.3:5000/v2.0 # <--- Replace with OpenStack Identity API endpoint
+      tenant: cloudfoundry # <--- Replace with OpenStack tenant name
+      username: mike # <--- Replace with OpenStack username
+      api_key: mike # <--- Replace with OpenStack password
+      default_key_name: bosh
+      default_security_groups: [bosh]
+
+    agent: {mbus: "nats://nats:nats-password@192.168.0.5:4222"} # <--- Replace with a private IP
+
+    ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+
+cloud_provider:
+  template: {name: cpi, release: bosh-openstack-cpi}
+
+  ssh_tunnel:
+    host: 10.5.50.133 # <--- Replace with a floating IP
+    port: 22
+    user: vcap
+    private_key: ./bosh.pem # Path relative to this manifest file
+
+  mbus: "https://mbus:mbus-password@10.5.50.133:6868" # <--- Replace with a floating IP
+
+  properties:
+    openstack: *openstack
+    agent: {mbus: "https://mbus:mbus-password@0.0.0.0:6868"}
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp: *ntp
