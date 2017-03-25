@@ -1,7 +1,7 @@
 ---
 stub:
   openstack:
-    auth_url: http://192.168.228.31:5000 # <--- Replace with OpenStack Identity API endpoint
+    auth_url: http://192.168.228.31:5000/v3 # <--- Replace with OpenStack Identity API endpoint
     project: jimlin # <--- Replace with OpenStack project name
     domain: default # <--- Replace with OpenStack domain name
     username: jimlin # <--- Replace with OpenStack username
