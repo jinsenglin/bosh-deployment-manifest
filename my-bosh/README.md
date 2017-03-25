@@ -18,9 +18,7 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP upload-stemcell STEMCELL
 
 spiff merge concourse-template.yml openstack-stub.yml > concourse-deployment.yml
 
-bosh-cli deployment concourse-deployment.yml
-
-bosh-cli deploy
+bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP deploy concourse-deployment.yml
 
 # VERSION NOTES
 
