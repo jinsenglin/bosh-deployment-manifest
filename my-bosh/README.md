@@ -14,6 +14,8 @@ spiff merge cloud-config-template.yml openstack-stub.yml > cloud-config.yml
 
 bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP update-cloud-config cloud-config.yml
 
+bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP upload-stemcell --skip-if-exists STEMCELL-URL
+
 MODIFY concourse-deployment.yml
 
 bosh-cli deployment concourse-deployment.yml
