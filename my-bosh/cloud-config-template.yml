@@ -42,5 +42,5 @@ compilation:
   workers: 5
   reuse_compilation_vms: true
   az: default
-  vm_type: m1.large
+  vm_type: large
   network: default
