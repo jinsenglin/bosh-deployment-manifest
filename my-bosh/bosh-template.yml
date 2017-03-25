@@ -1,0 +1,163 @@
+---
+stub:
+  openstack:
+    auth_url: http://192.168.228.31:5000 # <--- Replace with OpenStack Identity API endpoint
+    project: jimlin # <--- Replace with OpenStack project name
+    domain: default # <--- Replace with OpenStack domain name
+    username: jimlin # <--- Replace with OpenStack username
+    password: jimlin # <--- Replace with OpenStack password
+    security-group-name: bosh
+    key-pair-name: bosh
+    network:
+      cidr: 192.168.200.0/24 # <--- Replace with a private subnet CIDR
+      gw: 192.168.200.1 # <--- Replace with a private subnet's gateway
+      uuid: 0cb3a322-67d9-47ef-bd54-7420c106fd2b # <--- # Replace with private network UUID
+  server:
+    bosh:
+      private-ip: 192.168.200.2 # <--- Replace with a private IP 
+      public-ip: 192.168.210.25 # <--- Replace with a floating IP 
+
+name: bosh
+
+releases:
+- name: bosh
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.4
+  sha1: 4da9cedbcc8fbf11378ef439fb89de08300ad091
+- name: bosh-openstack-cpi
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-openstack-cpi-release?v=31
+  sha1: ed48a0e021805448e4581764d11d20696a4eaecb
+
+resource_pools:
+- name: vms
+  network: private
+  stemcell:
+    url: https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent?v=3363.12
+    sha1: 7b95f76ce3539f9ae78c403f9805a62d30a63710
+  cloud_properties:
+    instance_type: m1.xlarge
+
+disk_pools:
+- name: disks
+  disk_size: 20_000
+
+networks:
+- name: private
+  type: manual
+  subnets:
+  - range: (( stub.openstack.network.cidr ))
+    gateway: (( stub.openstack.network.gw ))
+    dns: [8.8.8.8]
+    cloud_properties: {net_id: (( stub.openstack.network.uuid ))}
+- name: public
+  type: vip
+
+jobs:
+- name: bosh
+  instances: 1
+
+  templates:
+  - {name: nats, release: bosh}
+  - {name: postgres, release: bosh}
+  - {name: blobstore, release: bosh}
+  - {name: director, release: bosh}
+  - {name: health_monitor, release: bosh}
+  - {name: registry, release: bosh}
+  - {name: openstack_cpi, release: bosh-openstack-cpi}
+
+  resource_pool: vms
+  persistent_disk_pool: disks
+
+  networks:
+  - name: private
+    static_ips: [(( stub.server.bosh.private-ip ))] 
+    default: [dns, gateway]
+  - name: public
+    static_ips: [stub.server.bosh.public-ip]
+
+  properties:
+    nats:
+      address: 127.0.0.1
+      user: nats
+      password: nats-password # <--- Uncomment & change
+
+    postgres: &db
+      listen_address: 127.0.0.1
+      host: 127.0.0.1
+      user: postgres
+      password: postgres-password # <--- Uncomment & change
+      database: bosh
+      adapter: postgres
+
+    registry:
+      address: (( stub.server.bosh.private-ip ))
+      host: (( stub.server.bosh.private-ip ))
+      db: *db
+      http:
+        user: admin
+        password: admin # <--- Uncomment & change
+        port: 25777
+      username: admin
+      password: admin # <--- Uncomment & change
+      port: 25777
+
+    blobstore:
+      address: (( stub.server.bosh.private-ip ))
+      port: 25250
+      provider: dav
+      director:
+        user: director
+        password: director-password # <--- Uncomment & change
+      agent:
+        user: agent
+        password: agent-password # <--- Uncomment & change
+
+    director:
+      address: 127.0.0.1
+      name: my-bosh
+      db: *db
+      cpi_job: openstack_cpi
+      max_threads: 3
+      user_management:
+        provider: local
+        local:
+          users:
+          - {name: admin, password: admin} # <--- Uncomment & change
+          - {name: hm, password: hm-password} # <--- Uncomment & change
+
+    hm:
+      director_account:
+        user: hm
+        password: hm-password # <--- Uncomment & change
+      resurrector_enabled: true
+
+    openstack: &openstack
+      auth_url: (( stub.openstack.auth_url ))
+      project: (( stub.openstack.project ))
+      domain: (( stub.openstack.domain ))
+      username: (( stub.openstack.username ))
+      api_key: (( stub.openstack.password ))
+      default_key_name: (( stub.openstack.key-pair-name))
+      default_security_groups:
+      - (( stub.openstack.security-group-name ))
+
+    agent:
+      mbus: (( "nats://nats:nats-password@" stub.server.bosh.private-ip ":4222" )) # <--- Uncomment & change
+
+    ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+
+cloud_provider:
+  template: {name: openstack_cpi, release: bosh-openstack-cpi}
+
+  ssh_tunnel:
+    host: (( stub.server.bosh.public-ip ))
+    port: 22
+    user: vcap
+    private_key: ./bosh.pem # Path relative to this manifest file
+
+  mbus: (( "https://mbus:mbus-password@" stub.server.bosh.public-ip ":6868" )) # <--- Uncomment & change
+
+  properties:
+    openstack: *openstack
+    agent: {mbus: "https://mbus:mbus-password@0.0.0.0:6868"} # <--- Uncomment & change
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp: *ntp
