@@ -10,7 +10,7 @@ bosh-init deploy bosh-deployment.yml
 
 bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP login
 
-MODIFY openstack-cloud-config.yml
+spiff merge cloud-config-template.yml openstack-stub.yml > cloud-config.yml
 
 bosh-cli update cloud-config openstack-cloud-config.yml
 
