@@ -1,5 +1,7 @@
 # USAGE
 
+bash generateCert.sh BOSH-DIRECTOR-IP
+
 MODIFY openstack-stub.yml
 
 spiff merge bosh-template.yml openstack-stub.yml > bosh-deployment.yml
