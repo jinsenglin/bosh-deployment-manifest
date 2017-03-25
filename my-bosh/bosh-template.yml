@@ -72,7 +72,7 @@ jobs:
     static_ips: [(( stub.server.bosh.private-ip ))] 
     default: [dns, gateway]
   - name: public
-    static_ips: [stub.server.bosh.public-ip]
+    static_ips:[(( stub.server.bosh.public-ip ))]
 
   properties:
     nats:
