@@ -1,8 +1,18 @@
+# USAGE
+
 MODIFY openstack-stub.yml
 
 spiff merge bosh-template.yml openstack-stub.yml > bosh-deployment.yml
 
-bosh-init deploy ./bosh-deployment.yml
+bosh-init deploy bosh-deployment.yml
+
+MODIFY openstack-cloud-config.yml
+
+bosh-cli update cloud-config openstack-cloud-config.yml
+
+MODIFY concourse-deployment.yml
+
+bosh-cli deploy concourse-deployment.yml
 
 # VERSION NOTES
 
