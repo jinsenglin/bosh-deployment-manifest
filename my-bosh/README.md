@@ -8,6 +8,8 @@ spiff merge bosh-template.yml openstack-stub.yml > bosh-deployment.yml
 
 bosh-init deploy bosh-deployment.yml
 
+bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP
+
 MODIFY openstack-cloud-config.yml
 
 bosh-cli update cloud-config openstack-cloud-config.yml
