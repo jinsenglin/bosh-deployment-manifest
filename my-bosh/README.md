@@ -13,6 +13,7 @@ bosh-cli update cloud-config openstack-cloud-config.yml
 MODIFY concourse-deployment.yml
 
 bosh-cli deployment concourse-deployment.yml
+
 bosh-cli deploy
 
 # VERSION NOTES
