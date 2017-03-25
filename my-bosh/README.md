@@ -12,7 +12,7 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP login
 
 spiff merge cloud-config-template.yml openstack-stub.yml > cloud-config.yml
 
-bosh-cli update-cloud-config cloud-config.yml
+bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP update-cloud-config cloud-config.yml
 
 MODIFY concourse-deployment.yml
 
