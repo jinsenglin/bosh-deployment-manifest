@@ -42,3 +42,7 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP -d concourse deploy conc
 * https://bosh.io/docs/director-certs.html
 * https://concourse.ci/clusters-with-bosh.html
 * https://bosh.io/releases
+
+# TODO
+
+* update security group of machine 'web' to allow TCP 8080
