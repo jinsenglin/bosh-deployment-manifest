@@ -43,4 +43,4 @@ compilation:
   reuse_compilation_vms: true
   az: default
   vm_type: large
-  network: default
+  network: private
