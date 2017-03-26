@@ -18,9 +18,9 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP upload-stemcell STEMCELL
 
 bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP env # to get director uuid
 
-MODIFY director-stub.yml
+MODIFY director-stub.yml and concourse-stub.yml
 
-spiff merge concourse-template.yml openstack-stub.yml director-stub.yml > concourse-deployment.yml
+spiff merge concourse-template.yml openstack-stub.yml director-stub.yml concourse-stub.yml > concourse-deployment.yml
 
 bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP deploy concourse-deployment.yml
 

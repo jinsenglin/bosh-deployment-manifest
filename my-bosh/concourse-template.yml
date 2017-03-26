@@ -1,6 +1,7 @@
 ---
 stub:
   director-uuid: b632f67b-b291-47c1-9a0c-4ff3c5ecf53a
+  concourse-vip: 192.168.210.28
 
 name: concourse
 
@@ -23,7 +24,11 @@ instance_groups:
   vm_type: default
   stemcell: trusty
   azs: [default]
-  networks: [{name: private}]
+  networks:
+  - name: private
+  - name: public
+    static_ips:
+    - (( stub.concourse-vip ))
   jobs:
   - name: atc
     release: concourse
