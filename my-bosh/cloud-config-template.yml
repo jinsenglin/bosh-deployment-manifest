@@ -26,7 +26,7 @@ disk_types:
   disk_size: 50_000
 
 networks:
-- name: default
+- name: private
   type: manual
   subnets:
   - range: (( stub.openstack.network.cidr ))
@@ -35,7 +35,7 @@ networks:
     dns: [8.8.8.8]
     cloud_properties:
       net_id: (( stub.openstack.network.uuid ))
-- name: vip
+- name: public
   type: vip
 
 compilation:
