@@ -16,8 +16,6 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP update-cloud-config clou
 
 bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP upload-stemcell STEMCELL-URL
 
-bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP upload-release RELEASE-URL
-
 bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP env # to get director uuid
 
 MODIFY director-stub.yml and concourse-stub.yml
@@ -31,8 +29,16 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP -d concourse deploy conc
 * bosh-director.release 261.4
 * bosh-openstack-cpi.release 31
 * bosh-openstack-kvm-ubuntu-trusty-go_agent.stemcell 3363.12
+* concourse.release 2.7.0
+* garden-runc.release 1.3.0
+
+# EXAMPLE VARIABLES
+
+* BOSH-DIRECTOR-IP=192.168.210.25
+* STEMCELL-URL=https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent?v=3363.12
 
 # REFERENCES
 
 * https://bosh.io/docs/director-certs.html
 * https://concourse.ci/clusters-with-bosh.html
+* https://bosh.io/releases
