@@ -42,5 +42,5 @@ compilation:
   workers: 5
   reuse_compilation_vms: true
   az: default
-  vm_type: large
+  vm_type: default
   network: private

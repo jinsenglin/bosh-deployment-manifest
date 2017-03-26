@@ -30,6 +30,7 @@ instance_groups:
   azs: [default]
   networks:
   - name: private
+    default: [dns, gateway]
   - name: public
     static_ips:
     - (( stub.concourse-vip ))
