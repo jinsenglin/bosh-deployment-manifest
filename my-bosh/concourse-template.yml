@@ -71,7 +71,7 @@ instance_groups:
 
 - name: worker
   instances: 1
-  vm_type: default
+  vm_type: large
   stemcell: trusty
   azs: [default]
   networks: [{name: private}]
