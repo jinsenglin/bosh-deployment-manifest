@@ -6,7 +6,7 @@ name: riemann
 
 director_uuid: (( stub.director-uuid ))
 
-release:
+releases:
 - name: riemann
   url: https://bosh.io/d/github.com/xoebus/riemann-boshrelease?v=5
   sha1: 45821502ba74f6bd5950cc194a0bc986cca52195
@@ -34,10 +34,7 @@ instance_groups:
   networks:
   - name: private
     default: [dns, gateway]
-  jobs:
-  - name: riemann
-    release: riemann
-    properties: {}
+  jobs: []
 
 - name: influxdb
   instances: 1
@@ -47,10 +44,7 @@ instance_groups:
   networks:
   - name: private
     default: [dns, gateway]
-  jobs:
-  - name: influxdb
-    release: influxdb
-    properties: {}
+  jobs: []
 
 - name: grafana
   instances: 1
@@ -60,10 +54,7 @@ instance_groups:
   networks:
   - name: private
     default: [dns, gateway]
-  jobs:
-  - name: grafana
-    release: grafana
-    properties: {}
+  jobs: []
 
 update:
   canaries: 1
