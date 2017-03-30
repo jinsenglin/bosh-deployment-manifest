@@ -12,7 +12,7 @@ release:
   sha1: 45821502ba74f6bd5950cc194a0bc986cca52195
   version: latest
 - name: influxdb
-  url:https://bosh.io/d/github.com/vito/influxdb-boshrelease?v=4
+  url: https://bosh.io/d/github.com/vito/influxdb-boshrelease?v=4
   sha1: 036ef77fb9ed387c4c8999f304cd798c09949ad2
   version: latest
 - name: grafana
