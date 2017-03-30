@@ -34,7 +34,10 @@ instance_groups:
   networks:
   - name: private
     default: [dns, gateway]
-  jobs: []
+  jobs:
+  - name: riemann
+    release: riemann
+    properties: {}
 
 - name: influxdb
   instances: 1
@@ -44,7 +47,10 @@ instance_groups:
   networks:
   - name: private
     default: [dns, gateway]
-  jobs: []
+  jobs:
+  - name: influxdb
+    release: influxdb
+    properties: {}
 
 - name: grafana
   instances: 1
@@ -54,7 +60,10 @@ instance_groups:
   networks:
   - name: private
     default: [dns, gateway]
-  jobs: []
+  jobs:
+  - name: grafana
+    release: grafana
+    properties: {}
 
 update:
   canaries: 1
