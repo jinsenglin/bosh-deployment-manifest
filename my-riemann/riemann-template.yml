@@ -1,0 +1,64 @@
+---
+stub:
+  director-uuid: b632f67b-b291-47c1-9a0c-4ff3c5ecf53a
+
+name: riemann
+
+director_uuid: (( stub.director-uuid ))
+
+release:
+- name: riemann
+  url: https://bosh.io/d/github.com/xoebus/riemann-boshrelease?v=5
+  sha1: 45821502ba74f6bd5950cc194a0bc986cca52195
+  version: latest
+- name: influxdb
+  url:https://bosh.io/d/github.com/vito/influxdb-boshrelease?v=4
+  sha1: 036ef77fb9ed387c4c8999f304cd798c09949ad2
+  version: latest
+- name: grafana
+  url: https://bosh.io/d/github.com/vito/grafana-boshrelease?v=10
+  sha1: e14100a6ba8bb1c12e24eed1054d016c0945c86c
+  version: latest
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: latest
+
+instance_groups:
+- name: riemann
+  instances: 1
+  vm_type: default
+  stemcell: trusty
+  azs: [default]
+  networks:
+  - name: private
+    default: [dns, gateway]
+  jobs: []
+
+- name: influxdb
+  instances: 1
+  vm_type: default
+  stemcell: trusty
+  azs: [default]
+  networks:
+  - name: private
+    default: [dns, gateway]
+  jobs: []
+
+- name: grafana
+  instances: 1
+  vm_type: default
+  stemcell: trusty
+  azs: [default]
+  networks:
+  - name: private
+    default: [dns, gateway]
+  jobs: []
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  serial: false
+  canary_watch_time: 1000-60000
+  update_watch_time: 1000-60000
