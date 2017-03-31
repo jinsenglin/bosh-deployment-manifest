@@ -6,7 +6,7 @@ my-bosh
 
 MODIFY riemann-stub.yml
 
-spiff merge riemann-template.yml riemann-stub.yml > riemann-deployment.yml
+spiff merge riemann-template.yml ../my-bosh/director-stub.yml riemann-stub.yml > riemann-deployment.yml
 
 bosh-cli --ca-cert ../my-bosh/certs/rootCA.pem -e BOSH-DIRECTOR-IP -d riemann deploy riemann-deployment.yml
 

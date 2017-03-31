@@ -45,7 +45,12 @@ instance_groups:
   networks:
   - name: private
     default: [dns, gateway]
-  jobs: []
+  jobs:
+  - name: influxdb
+    release: influxdb
+    properties:
+      influxdb:
+        database: riemann
 
 - name: grafana
   instances: 1
