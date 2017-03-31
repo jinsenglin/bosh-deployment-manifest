@@ -27,3 +27,14 @@ bosh-cli --ca-cert ../my-bosh/certs/rootCA.pem -e BOSH-DIRECTOR-IP -d riemann de
 # TODO
 
 * update security group of machine 'grafana' to allow TCP 3000
+
+# RESULT
+
+grafana web url http://192.168.210.32:3000
+grafana user admin
+grafana pass admin
+
+influxdb api url http://192.168.200.8:8086
+influxdb db riemann
+influxdb user root
+influxdb pass root
