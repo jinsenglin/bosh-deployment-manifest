@@ -1,6 +1,7 @@
 ---
 stub:
   director-uuid: b632f67b-b291-47c1-9a0c-4ff3c5ecf53a
+  grafana-vip: 192.168.210.32
 
 name: riemann
 
@@ -54,7 +55,16 @@ instance_groups:
   networks:
   - name: private
     default: [dns, gateway]
-  jobs: []
+  - name: public
+    static_ips:
+    - (( stub.grafana-vip ))
+  jobs:
+  - name: grafana
+    release: grafana
+    properties:
+      grafana:
+        admin_username: admin
+        admin_password: admin
 
 update:
   canaries: 1
