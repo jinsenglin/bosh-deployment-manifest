@@ -46,3 +46,9 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP -d concourse deploy conc
 # TODO
 
 * update security group of machine 'web' to allow TCP 8080
+
+# EXTRA
+
+spiff merge concourse-to-riemann-template.yml openstack-stub.yml director-stub.yml concourse-stub.yml > concourse-deployment.yml
+
+bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP -d concourse deploy concourse-deployment.yml
