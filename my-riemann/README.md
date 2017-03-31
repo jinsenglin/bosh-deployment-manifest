@@ -30,11 +30,19 @@ bosh-cli --ca-cert ../my-bosh/certs/rootCA.pem -e BOSH-DIRECTOR-IP -d riemann de
 
 # RESULT
 
-grafana web url http://192.168.210.32:3000
-grafana user admin
-grafana pass admin
+grafana
 
-influxdb api url http://192.168.200.8:8086
-influxdb db riemann
-influxdb user root
-influxdb pass root
+* web url http://192.168.210.32:3000
+* user admin
+* pass admin
+
+influxdb
+
+* api url http://192.168.200.8:8086
+* db riemann
+* user root
+* pass root
+
+riemann
+
+* host 192.168.200.7
