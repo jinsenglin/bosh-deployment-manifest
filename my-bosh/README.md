@@ -52,3 +52,8 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP -d concourse deploy conc
 spiff merge concourse-to-riemann-template.yml openstack-stub.yml director-stub.yml concourse-stub.yml > concourse-deployment.yml
 
 bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP -d concourse deploy concourse-deployment.yml
+
+# SSH
+
+ssh -i bosh.pem vcap@BOSH-DIRECTOR-IP
+
