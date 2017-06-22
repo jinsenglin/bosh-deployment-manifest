@@ -57,3 +57,13 @@ bosh-cli --ca-cert certs/rootCA.pem -e BOSH-DIRECTOR-IP -d concourse deploy conc
 
 ssh -i bosh.pem vcap@BOSH-DIRECTOR-IP
 
+```
+concourse web 192.168.210.28:8080
+riemann       192.168.210.56
+influxdb      192.168.210.30:8083
+grafana       192.168.210.32:3000
+```
+
+# LOG
+
+/var/vcap/sys/log/RIEMANN/riemann.log
