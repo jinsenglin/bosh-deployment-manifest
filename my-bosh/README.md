@@ -12,7 +12,7 @@ spiff merge bosh-template.yml openstack-stub.yml > bosh-deployment.yml
 
 bosh-init deploy bosh-deployment.yml
 
-bosh-cli --ca-cert certs/rootCA.pem -e $BOSH_DIRECTOR_IP login
+bosh-cli --ca-cert certs/rootCA.pem -e $BOSH_DIRECTOR_IP login # admin / admin
 
 spiff merge cloud-config-template.yml openstack-stub.yml > cloud-config.yml
 
